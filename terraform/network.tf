@@ -31,7 +31,7 @@ resource "aws_subnet" "this" {
   vpc_id                  = local.vpc_id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone       = "${var.region}"
+  availability_zone       = "${var.region}a"
 
   tags = merge(
     var.tags,
@@ -157,14 +157,16 @@ resource "aws_security_group" "this" {
   )
 }
 
-# Get the Route53 hosted zone
+# Get the Route53 hosted zone (only if use_route53 is true)
 data "aws_route53_zone" "this" {
-  name = var.domain
+  count = var.use_route53 ? 1 : 0
+  name  = var.domain
 }
 
-# Create DNS A record for Supabase
+# Create DNS A record for Supabase (only if use_route53 is true)
 resource "aws_route53_record" "a_record" {
-  zone_id = data.aws_route53_zone.this.zone_id
+  count   = var.use_route53 ? 1 : 0
+  zone_id = data.aws_route53_zone.this[0].zone_id
   name    = "supabase.${var.domain}"
   type    = "A"
   ttl     = 300
@@ -181,17 +183,34 @@ resource "aws_eip" "this" {
       Name = "supabase-eip"
     }
   )
+
+  # Explicitly set dependency on the internet gateway
+  depends_on = [aws_internet_gateway.this]
 }
 
 # Associate Elastic IP with EC2 instance
 resource "aws_eip_association" "this" {
   instance_id   = aws_instance.this.id
   allocation_id = aws_eip.this.id
+
+  # Add explicit dependency to enforce destroy order
+  depends_on = [aws_instance.this, aws_eip.this]
+
+  # Ensure this is destroyed before the instance
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
-# Create ACM certificate if not provided
+# We'll use a placeholder for non-Route53 domains during instance creation
+# The actual DNS will be available after instance creation via the output
+locals {
+  domain_name = var.use_route53 ? "supabase.${var.domain}" : "supabase-instance"
+}
+
+# Create ACM certificate if not provided and using Route53
 resource "aws_acm_certificate" "this" {
-  count = var.certificate_arn == "" ? 1 : 0
+  count = var.certificate_arn == "" && var.use_route53 ? 1 : 0
 
   domain_name       = "supabase.${var.domain}"
   validation_method = "DNS"
@@ -208,9 +227,9 @@ resource "aws_acm_certificate" "this" {
   )
 }
 
-# Create DNS records for ACM certificate validation
+# Create DNS records for ACM certificate validation (only if using Route53)
 resource "aws_route53_record" "certificate_validation" {
-  for_each = var.certificate_arn == "" ? {
+  for_each = var.certificate_arn == "" && var.use_route53 ? {
     for dvo in aws_acm_certificate.this[0].domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
@@ -218,21 +237,21 @@ resource "aws_route53_record" "certificate_validation" {
     }
   } : {}
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
   ttl     = 60
 }
 
-# Validate the certificate
+# Validate the certificate (only if using Route53)
 resource "aws_acm_certificate_validation" "this" {
-  count = var.certificate_arn == "" ? 1 : 0
+  count = var.certificate_arn == "" && var.use_route53 ? 1 : 0
 
   certificate_arn         = aws_acm_certificate.this[0].arn
   validation_record_fqdns = [for record in aws_route53_record.certificate_validation : record.fqdn]
 }
 
 locals {
-  certificate_arn = var.certificate_arn != "" ? var.certificate_arn : aws_acm_certificate.this[0].arn
+  certificate_arn = var.certificate_arn != "" ? var.certificate_arn : var.use_route53 ? aws_acm_certificate.this[0].arn : null
 }

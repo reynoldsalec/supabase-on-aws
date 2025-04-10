@@ -10,6 +10,7 @@ sendgrid_api   = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ## REQUIRED ##
 region    = "us-west-2"
+# domain is required only if use_route53 is true
 domain    = "example.com"
 timezone  = "Europe/Amsterdam"
 auth_user = "admin"
@@ -49,3 +50,4 @@ smtp_country    = "Company Country"
 # vpc_id            = ""
 # subnet_id         = ""
 # certificate_arn   = ""
+# use_route53       = true # Set to false to use AWS-assigned domain instead of Route53

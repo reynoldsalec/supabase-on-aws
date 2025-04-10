@@ -53,6 +53,9 @@ data "cloudinit_config" "this" {
       apt-get update
       apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
+      # Add ubuntu user to the docker group
+      usermod -aG docker ubuntu
+
       # Setup EBS volume
       mkdir -p /mnt/supabase_volume
       device_path="/dev/nvme1n1"
@@ -74,8 +77,19 @@ data "cloudinit_config" "this" {
       mkdir -p /mnt/supabase_volume/supabase/data
       mkdir -p /root/supabase
 
+      # Copy configuration to ubuntu user's home directory
+      mkdir -p /home/ubuntu/supabase
+      cp -r /root/supabase/* /home/ubuntu/supabase/
+      chown -R ubuntu:ubuntu /home/ubuntu/supabase
+
+      # Create a symlink for easier access
+      ln -s /mnt/supabase_volume/supabase/data /home/ubuntu/supabase/data
+
       # Get Supabase configuration
       cd /root/supabase
+
+      # Run domain update script if needed
+      /root/supabase/update-domain.sh
 
       # Start Supabase Docker Compose
       docker compose -f /root/supabase/docker-compose.yml up -d
@@ -120,20 +134,6 @@ resource "aws_instance" "this" {
       Name = "supabase-instance"
     }
   )
-
-  # Wait for the instance to be fully initialized before continuing
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'Instance is ready!'"
-    ]
-
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = var.ssh_pub_file != "" ? file(trimsuffix(var.ssh_pub_file, ".pub")) : null
-      host        = aws_instance.this.public_ip
-    }
-  }
 
   lifecycle {
     ignore_changes = [user_data]

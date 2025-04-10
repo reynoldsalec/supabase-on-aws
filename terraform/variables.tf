@@ -37,8 +37,9 @@ variable "region" {
 }
 
 variable "domain" {
-  description = "Domain name where the Supabase instance is accessible. The final domain will be of the format `supabase.example.com`"
+  description = "Domain name where the Supabase instance is accessible. Required only if use_route53 is true. When use_route53 is false, the EC2's public DNS will be used instead."
   type        = string
+  default     = ""
 }
 
 variable "site_url" {
@@ -237,6 +238,13 @@ variable "certificate_arn" {
 # Enable or disable SendGrid integration
 variable "enable_sendgrid" {
   description = "Whether to enable SendGrid for email functionality. If false, email functionality will be disabled."
+  type        = bool
+  default     = true
+}
+
+# Enable or disable Route53 for domain management
+variable "use_route53" {
+  description = "Whether to use Route53 for domain management. If false, the EC2 public DNS will be used instead."
   type        = bool
   default     = true
 }

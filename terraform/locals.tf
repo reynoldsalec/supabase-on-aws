@@ -74,7 +74,7 @@ locals {
       TF_JWT_SECRET               = "${random_password.jwt.result}",
       TF_ANON_KEY                 = "${jwt_hashed_token.anon.token}",
       TF_SERVICE_ROLE_KEY         = "${jwt_hashed_token.service_role.token}",
-      TF_DOMAIN                   = "${var.domain}",
+      TF_DOMAIN                   = var.use_route53 ? "${var.domain}" : "${local.domain_name}",
       TF_SITE_URL                 = "${var.site_url}",
       TF_TIMEZONE                 = "${var.timezone}",
       TF_REGION                   = "${var.region}",
@@ -91,6 +91,7 @@ locals {
       TF_DEFAULT_ORGANIZATION     = "${var.studio_org}",
       TF_DEFAULT_PROJECT          = "${var.studio_project}",
       TF_EMAIL_ENABLED            = var.enable_sendgrid ? "true" : "false",
+      TF_USE_HTTPS                = var.use_route53 ? "true" : "false",
     }
   )
 
@@ -145,6 +146,13 @@ locals {
       owner       = "root:root"
       encoding    = "b64"
       content     = base64encode("${local.kong_file}")
+    },
+    # Add a post-startup script to fix configuration with the real domain
+    {
+      path        = "/root/supabase/update-domain.sh"
+      permissions = "0755"
+      owner       = "root:root"
+      content     = var.use_route53 ? "#!/bin/bash\necho 'Using Route53, no domain update needed.'" : "#!/bin/bash\nPUBLIC_DNS=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)\nsed -i \"s/supabase-instance/$PUBLIC_DNS/g\" /root/supabase/.env\nsed -i \"s/supabase-instance/$PUBLIC_DNS/g\" /home/ubuntu/supabase/.env\necho \"Domain updated to $PUBLIC_DNS\"\n"
     },
   ]
 })}

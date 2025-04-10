@@ -76,6 +76,7 @@ resource "aws_ebs_volume" "this" {
       Name = "supabase-volume"
     }
   )
+
 }
 
 # Attach EBS Volume to EC2 instance
@@ -84,8 +85,13 @@ resource "aws_volume_attachment" "this" {
   volume_id   = aws_ebs_volume.this.id
   instance_id = aws_instance.this.id
 
-  # Ensure the volume is detached when the instance is terminated
-  skip_destroy = true
+  # Add a force_detach option to ensure the volume can be detached during destroy
+  force_detach = true
+
+  # Add explicit lifecycle rule to ensure attachments are destroyed before volumes
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Get IAM policy for EC2 to access S3

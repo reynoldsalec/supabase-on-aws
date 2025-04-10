@@ -28,7 +28,7 @@ resource "null_resource" "sendgrid_single_sender" {
 resource "sendgrid_domain_authentication" "this" {
   count = var.enable_sendgrid ? 1 : 0
 
-  domain             = var.domain
+  domain             = var.use_route53 ? var.domain : ""
   automatic_security = false
   valid              = true
 }
@@ -36,14 +36,14 @@ resource "sendgrid_domain_authentication" "this" {
 resource "sendgrid_link_branding" "this" {
   count = var.enable_sendgrid ? 1 : 0
 
-  domain = var.domain
+  domain = var.use_route53 ? var.domain : ""
   valid  = true
 }
 
 resource "aws_route53_record" "domain_auth_0" {
-  count = var.enable_sendgrid ? 1 : 0
+  count = var.enable_sendgrid && var.use_route53 ? 1 : 0
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   type    = upper(sendgrid_domain_authentication.this[0].dns[0].type)
   name    = trimsuffix(sendgrid_domain_authentication.this[0].dns[0].host, ".${var.domain}")
   records = [sendgrid_domain_authentication.this[0].dns[0].data]
@@ -51,9 +51,9 @@ resource "aws_route53_record" "domain_auth_0" {
 }
 
 resource "aws_route53_record" "domain_auth_1" {
-  count = var.enable_sendgrid ? 1 : 0
+  count = var.enable_sendgrid && var.use_route53 ? 1 : 0
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   type    = upper(sendgrid_domain_authentication.this[0].dns[1].type)
   name    = trimsuffix(sendgrid_domain_authentication.this[0].dns[1].host, ".${var.domain}")
   records = [sendgrid_domain_authentication.this[0].dns[1].data]
@@ -61,9 +61,9 @@ resource "aws_route53_record" "domain_auth_1" {
 }
 
 resource "aws_route53_record" "domain_auth_2" {
-  count = var.enable_sendgrid ? 1 : 0
+  count = var.enable_sendgrid && var.use_route53 ? 1 : 0
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   type    = upper(sendgrid_domain_authentication.this[0].dns[2].type)
   name    = trimsuffix(sendgrid_domain_authentication.this[0].dns[2].host, ".${var.domain}")
   records = [sendgrid_domain_authentication.this[0].dns[2].data]
@@ -71,9 +71,9 @@ resource "aws_route53_record" "domain_auth_2" {
 }
 
 resource "aws_route53_record" "link_brand_0" {
-  count = var.enable_sendgrid ? 1 : 0
+  count = var.enable_sendgrid && var.use_route53 ? 1 : 0
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   type    = upper(sendgrid_link_branding.this[0].dns[0].type)
   name    = trimsuffix(sendgrid_link_branding.this[0].dns[0].host, ".${var.domain}")
   records = [upper(sendgrid_link_branding.this[0].dns[0].type) == "CNAME" ? "${sendgrid_link_branding.this[0].dns[0].data}." : sendgrid_link_branding.this[0].dns[0].data]
@@ -81,9 +81,9 @@ resource "aws_route53_record" "link_brand_0" {
 }
 
 resource "aws_route53_record" "link_brand_1" {
-  count = var.enable_sendgrid ? 1 : 0
+  count = var.enable_sendgrid && var.use_route53 ? 1 : 0
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = data.aws_route53_zone.this[0].zone_id
   type    = upper(sendgrid_link_branding.this[0].dns[1].type)
   name    = trimsuffix(sendgrid_link_branding.this[0].dns[1].host, ".${var.domain}")
   records = [upper(sendgrid_link_branding.this[0].dns[1].type) == "CNAME" ? "${sendgrid_link_branding.this[0].dns[1].data}." : sendgrid_link_branding.this[0].dns[1].data]
