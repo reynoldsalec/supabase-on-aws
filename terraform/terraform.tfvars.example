@@ -1,0 +1,51 @@
+## REQUIRED SECRETS ##
+
+############
+# IMP. The below secrets/tokens/apis should not be stored in version control
+############
+aws_access_key = "AKIAXXXXXXXXXXXXXXXX"
+aws_secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# SendGrid API is required only if enable_sendgrid is true
+sendgrid_api   = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+## REQUIRED ##
+region    = "us-west-2"
+domain    = "example.com"
+timezone  = "Europe/Amsterdam"
+auth_user = "admin"
+site_url  = "app.example.com"
+
+# These SMTP settings are required only if enable_sendgrid is true
+smtp_admin_user = "admin@example.com"
+smtp_addr       = "Company Address"
+smtp_city       = "Company City"
+smtp_country    = "Company Country"
+
+## OPTIONAL ##
+# ami_id            = ""
+# instance_type     = "t3.small"
+# instance_backups  = true
+# ssh_pub_file      = "~/.ssh/id_rsa.pub"
+# tags              = { Environment = "production", Owner = "admin" }
+# volume_size       = 25
+# enable_ssh        = true
+# ssh_cidr_blocks   = ["your-own-ip/32", "office-ip/24"]
+# enable_db_con     = false
+# db_cidr_blocks    = ["your-own-ip/32", "office-ip/24"]
+# s3_restrict_access = false
+# studio_org        = "Default Organization"
+# studio_project    = "Default Project"
+# enable_sendgrid   = true  # Set to false to disable email functionality
+# smtp_host         = "smtp.sendgrid.net"
+# smtp_port         = 465
+# smtp_user         = "apikey"
+# smtp_sender_name  = ""
+# smtp_addr_2       = ""
+# smtp_state        = ""
+# smtp_zip_code     = ""
+# smtp_reply_to     = ""
+# smtp_reply_to_name = ""
+# smtp_nickname     = ""
+# vpc_id            = ""
+# subnet_id         = ""
+# certificate_arn   = ""
