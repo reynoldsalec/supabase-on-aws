@@ -1,11 +1,12 @@
 # Supabase on AWS
 
-[Supabase](https://supabase.com/) is a backend-as-a-service platform built around the Postgres database, and is an Open Source alternative to Firebase. It can reduce time to market by providing a ready to use backend that includes a database with real time capabilities, authentication, object storage and edge functions. You can use Supabase as a service via their [managed offerings](https://supabase.com/pricing) or self-host it on your own server or on a cloud provider.
+A version of [timothymamo's](https://github.com/timothymamo) project [supabase-on-do](https://github.com/digitalocean/supabase-on-do), but configured for AWS.
+
+Note that this is a work in progress!
 
 ## Running Supabase on AWS
 
-We will self-host Supabase by deploying the following architecture on AWS.
-![Supabase on AWS](./assets/Supabase-on-AWS.png "Supabase on AWS")
+@todo: Add a diagram of the architecture
 
 ### Docker Compose
 
