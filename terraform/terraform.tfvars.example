@@ -3,8 +3,6 @@
 ############
 # IMP. The below secrets/tokens/apis should not be stored in version control
 ############
-aws_access_key = "AKIAXXXXXXXXXXXXXXXX"
-aws_secret_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # SendGrid API is required only if enable_sendgrid is true
 sendgrid_api   = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 

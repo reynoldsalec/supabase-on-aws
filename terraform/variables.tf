@@ -1,19 +1,3 @@
-# You can also set AWS_ACCESS_KEY_ID env variable
-# Set the variable value in *.tfvars file or use the -var="aws_access_key=..." CLI option
-variable "aws_access_key" {
-  description = "AWS Access Key ID for API operations."
-  type        = string
-  sensitive   = true
-}
-
-# You can also set AWS_SECRET_ACCESS_KEY env variable
-# Set the variable value in *.tfvars file or use the -var="aws_secret_key=..." CLI option
-variable "aws_secret_key" {
-  description = "AWS Secret Access Key for API operations."
-  type        = string
-  sensitive   = true
-}
-
 # You can also set SENDGRID_API_KEY env variable
 # Set the variable value in *.tfvars file or use the -var="sendgrid_api=..." CLI option
 variable "sendgrid_api" {

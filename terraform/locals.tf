@@ -89,8 +89,7 @@ locals {
       TF_TIMEZONE                 = "${var.timezone}",
       TF_REGION                   = "${var.region}",
       TF_SPACES_BUCKET            = "${aws_s3_bucket.this.id}",
-      TF_SPACES_ACCESS_KEY_ID     = "${var.aws_access_key}",
-      TF_SPACES_SECRET_ACCESS_KEY = "${var.aws_secret_key}",
+      # Using instance profile exclusively - no explicit credentials
       TF_SPACES_ENDPOINT          = "https://s3.${var.region}.amazonaws.com",
       TF_SMTP_ADMIN_EMAIL         = "${var.smtp_admin_user}",
       TF_SMTP_HOST                = local.effective_smtp.host,
@@ -106,8 +105,6 @@ locals {
   )
 
   route53_ini = templatefile("${path.module}/files/route53.ini.tftpl", {
-    TF_AWS_ACCESS_KEY = "${var.aws_access_key}",
-    TF_AWS_SECRET_KEY = "${var.aws_secret_key}",
     TF_AWS_REGION = "${var.region}"
   })
 

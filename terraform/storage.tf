@@ -94,14 +94,15 @@ resource "aws_volume_attachment" "this" {
   }
 }
 
-# Get IAM policy for EC2 to access S3
-resource "aws_iam_policy" "s3_access" {
-  name        = "supabase-s3-access"
-  description = "Policy for EC2 to access S3 bucket"
+# Enhanced IAM policy for EC2 to access AWS services
+resource "aws_iam_policy" "aws_services_access" {
+  name        = "supabase-aws-services-access"
+  description = "Policy for EC2 to access AWS services needed by Supabase"
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = concat([
+      # S3 access for storage
       {
         Action = [
           "s3:GetObject",
@@ -114,12 +115,37 @@ resource "aws_iam_policy" "s3_access" {
           aws_s3_bucket.this.arn,
           "${aws_s3_bucket.this.arn}/*"
         ]
-      }
-    ]
+      }],
+      # Route53 permissions if needed
+      var.use_route53 ? [{
+        Action = [
+          "route53:ChangeResourceRecordSets",
+          "route53:ListResourceRecordSets",
+          "route53:GetHostedZone",
+          "route53:GetChange"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "route53:ListHostedZones",
+          "route53:ListHostedZonesByName"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }] : [],
+      # SES permissions if using SES
+      var.enable_ses ? [{
+        Action   = ["ses:SendEmail", "ses:SendRawEmail", "ses:GetIdentityVerificationAttributes"]
+        Effect   = "Allow"
+        Resource = "*"
+      }] : []
+    )
   })
 }
 
-# Create IAM role for EC2 to access S3
+# Create IAM role for EC2 to access AWS services
 resource "aws_iam_role" "this" {
   name = "supabase-ec2-role"
 
@@ -144,10 +170,10 @@ resource "aws_iam_role" "this" {
   )
 }
 
-# Attach S3 access policy to IAM role
-resource "aws_iam_role_policy_attachment" "s3_access" {
+# Attach AWS services access policy to IAM role
+resource "aws_iam_role_policy_attachment" "aws_services_access" {
   role       = aws_iam_role.this.name
-  policy_arn = aws_iam_policy.s3_access.arn
+  policy_arn = aws_iam_policy.aws_services_access.arn
 }
 
 # Create IAM instance profile

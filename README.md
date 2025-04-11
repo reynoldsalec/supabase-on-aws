@@ -65,9 +65,8 @@ Infrastructure as Code practices recommend automating as much as possible of our
 
 ## The Manual Part
 
-- Create an AWS IAM user with programmatic access and the necessary permissions
-- Create an AWS S3 access key and secret
-- Create a Domain in Route 53 (or use an existing one).
+- Create an AWS IAM user with the necessary permissions to create resources
+- Create a Domain in Route 53 (or use an existing one)
 - Create an admin (full access) SendGrid API token ([docs](https://docs.sendgrid.com/for-developers/sending-email/brite-verify#creating-a-new-api-key)) (Only if you need email functionality)
 - (_Optional_) If using Terraform Cloud to manage your state file, create a [user API token](https://app.terraform.io/app/settings/tokens)
 
@@ -153,3 +152,22 @@ terraform output jwt_service_role
 Take a **5-10 min** break and after that point your browser to `supabase.${your-domain}`. When the pop-up asking for your auth details appears enter your provided username and the generated htpasswd.
 
 Enjoy and Happy creating :)
+
+### AWS Authentication
+
+This project uses IAM instance profiles for authentication, which is the AWS recommended practice. This means:
+
+1. No AWS access keys or secret keys are needed in your configuration
+2. Terraform will use your environment's AWS credentials (from environment variables or ~/.aws/credentials) to create resources
+3. The EC2 instance will use its attached instance profile to authenticate with AWS services (S3, Route53, SES, etc.)
+
+Using instance profiles enhances security by:
+- Eliminating the need for long-lived credentials
+- Removing the risk of credential exposure in configuration files
+- Eliminating credential management and rotation
+- Following AWS best practices for service-to-service authentication
+
+When deploying this project:
+1. Ensure your AWS CLI is configured with appropriate credentials
+2. The terraform commands will use these credentials to create resources
+3. The deployed EC2 instance will use its IAM role for all AWS API calls
