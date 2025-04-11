@@ -16,6 +16,17 @@ output "sendgrid_generated_api" {
   sensitive   = true
 }
 
+output "ses_smtp_credentials" {
+  description = "SMTP server details for Amazon SES"
+  value       = var.enable_ses ? {
+    server   = local.smtp_settings.host
+    port     = local.smtp_settings.port
+    username = local.smtp_settings.user
+    password = local.smtp_settings.password
+  } : null
+  sensitive = true
+}
+
 output "jwt" {
   description = "Randomly generated 40 character jwt secret."
   value       = random_password.jwt.result

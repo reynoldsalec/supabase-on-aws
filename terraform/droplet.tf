@@ -79,7 +79,7 @@ data "cloudinit_config" "this" {
 
       # Copy configuration to ubuntu user's home directory
       mkdir -p /home/ubuntu/supabase
-      cp -r /root/supabase/* /home/ubuntu/supabase/
+      cp -r /root/supabase/. /home/ubuntu/supabase/
       chown -R ubuntu:ubuntu /home/ubuntu/supabase
 
       # Create a symlink for easier access

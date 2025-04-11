@@ -30,13 +30,25 @@ All of the above will be running on an AWS [EC2 instance](https://aws.amazon.com
 
 Supabase's auth component, `GoTrue`, requires the ability to send emails for authentication workflows like password resets. As with most cloud providers, AWS has restrictions on outbound port 25 for new accounts (to prevent spam).
 
-By default, we use [SendGrid](https://sendgrid.com/) to send emails, which offers a generous free plan of 100 emails/day that should suffice for most use cases. However, SendGrid integration is now optional - you can disable it if:
+You have two options for email delivery:
 
-- You don't need email functionality for your application
-- You want to use a different email service provider
-- You're just testing Supabase and don't need real email delivery
+#### Option 1: SendGrid
+We support using [SendGrid](https://sendgrid.com/), which offers a generous free plan of 100 emails/day that should suffice for most use cases.
 
-To disable SendGrid, simply set `enable_sendgrid = false` in your Terraform variables. When disabled, the email functionality in Supabase will be turned off, and you won't need to provide a SendGrid API key.
+To use SendGrid, set `enable_sendgrid = true` and provide a SendGrid API key.
+
+#### Option 2: Amazon SES (Recommended for AWS deployments)
+For a fully AWS-integrated solution, you can use [Amazon SES](https://aws.amazon.com/ses/) (Simple Email Service) which provides reliable and cost-effective email sending.
+
+To use SES:
+1. Set `enable_ses = true` and `enable_sendgrid = false`
+2. Ensure your domain is verified in SES (the module will attempt to set this up if using Route53)
+3. If your account is in the SES sandbox, you'll need to verify recipient email addresses
+
+SES advantages:
+- Tighter integration with AWS
+- Potentially lower costs for high volume
+- Better deliverability for AWS-hosted applications
 
 ### Packer and Terraform
 

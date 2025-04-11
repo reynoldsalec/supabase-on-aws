@@ -68,6 +68,16 @@ locals {
   smtp_reply_to      = var.smtp_reply_to != "" ? var.smtp_reply_to : var.smtp_admin_user
   smtp_reply_to_name = var.smtp_reply_to_name != "" ? var.smtp_reply_to_name : var.smtp_sender_name != "" ? var.smtp_sender_name : var.smtp_admin_user
 
+  # Determine the SMTP settings based on which provider is enabled
+  effective_smtp = {
+    # Use smtp_settings from ses.tf when SES is enabled, fall back to SendGrid or disabled
+    host     = var.enable_ses ? local.smtp_settings.host : (var.enable_sendgrid ? var.smtp_host : "disabled")
+    port     = var.enable_ses ? local.smtp_settings.port : (var.enable_sendgrid ? var.smtp_port : 25)
+    user     = var.enable_ses ? local.smtp_settings.user : (var.enable_sendgrid ? var.smtp_user : "")
+    password = var.enable_ses ? local.smtp_settings.password : (var.enable_sendgrid ? (var.sendgrid_api != "" ? sendgrid_api_key.this[0].api_key : var.sendgrid_api) : "")
+    enabled  = var.enable_ses || var.enable_sendgrid ? "true" : "false"
+  }
+
   env_file = templatefile("${path.module}/files/.env.tftpl",
     {
       TF_PSQL_PASS                = "${random_password.psql.result}",
@@ -83,14 +93,14 @@ locals {
       TF_SPACES_SECRET_ACCESS_KEY = "${var.aws_secret_key}",
       TF_SPACES_ENDPOINT          = "https://s3.${var.region}.amazonaws.com",
       TF_SMTP_ADMIN_EMAIL         = "${var.smtp_admin_user}",
-      TF_SMTP_HOST                = var.enable_sendgrid ? "${var.smtp_host}" : "disabled",
-      TF_SMTP_PORT                = var.enable_sendgrid ? "${var.smtp_port}" : "25",
-      TF_SMTP_USER                = var.enable_sendgrid ? "${var.smtp_user}" : "",
-      TF_SMTP_PASS                = var.enable_sendgrid ? (var.sendgrid_api != "" ? "${sendgrid_api_key.this[0].api_key}" : var.sendgrid_api) : "",
+      TF_SMTP_HOST                = local.effective_smtp.host,
+      TF_SMTP_PORT                = local.effective_smtp.port,
+      TF_SMTP_USER                = local.effective_smtp.user,
+      TF_SMTP_PASS                = local.effective_smtp.password,
       TF_SMTP_SENDER_NAME         = "${local.smtp_sender_name}",
       TF_DEFAULT_ORGANIZATION     = "${var.studio_org}",
       TF_DEFAULT_PROJECT          = "${var.studio_project}",
-      TF_EMAIL_ENABLED            = var.enable_sendgrid ? "true" : "false",
+      TF_EMAIL_ENABLED            = local.effective_smtp.enabled,
       TF_USE_HTTPS                = var.use_route53 ? "true" : "false",
     }
   )
