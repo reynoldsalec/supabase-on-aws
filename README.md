@@ -55,7 +55,7 @@ Infrastructure as Code practices recommend automating as much as possible of our
 
 - Create an AWS IAM user with programmatic access and the necessary permissions
 - Create an AWS S3 access key and secret
-- Create a Domain in Route 53 (or use an existing one)
+- Create a Domain in Route 53 (or use an existing one).
 - Create an admin (full access) SendGrid API token ([docs](https://docs.sendgrid.com/for-developers/sending-email/brite-verify#creating-a-new-api-key)) (Only if you need email functionality)
 - (_Optional_) If using Terraform Cloud to manage your state file, create a [user API token](https://app.terraform.io/app/settings/tokens)
 
@@ -114,9 +114,12 @@ terraform plan
 ## Apply the changes specified by confirming at the prompt
 ## (--auto-approve if you're feeling adventures)
 terraform apply
+```
 
-## If you enabled SendGrid, apply again to verify the SendGrid components
-## (needed as they are created before the domain records in AWS)
+The apply will create all resources including the ACM certificate with DNS validation; however this can take a while to complete.
+
+```bash
+## If you enabled SendGrid, you might need to apply again to verify the SendGrid components
 terraform apply
 ```
 
