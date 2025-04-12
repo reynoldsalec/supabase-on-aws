@@ -89,27 +89,3 @@ output "access_instructions" {
   description = "Instructions on how to access Supabase."
   value       = var.use_route53 ? "Access Supabase at: https://supabase.${var.domain}" : "Access Supabase at: http://${aws_eip.this.public_dns}\nNote: When using the AWS-assigned domain without Route53, you'll need to accept any certificate warnings in your browser."
 }
-
-output "cleanup_script" {
-  description = "Script to help clean up resources if terraform destroy fails"
-  value       = <<EOF
-#!/bin/bash
-# Run this script if terraform destroy fails due to dependency issues
-# Replace these values with the actual IDs from your terraform output
-INSTANCE_ID="${aws_instance.this.id}"
-VOLUME_ID="${aws_ebs_volume.this.id}"
-EIP_ALLOC_ID="${aws_eip.this.id}"
-
-echo "Stopping EC2 instance..."
-aws ec2 stop-instances --instance-ids $INSTANCE_ID
-aws ec2 wait instance-stopped --instance-ids $INSTANCE_ID
-
-echo "Detaching EBS volume..."
-aws ec2 detach-volume --force --volume-id $VOLUME_ID
-
-echo "Disassociating Elastic IP..."
-aws ec2 disassociate-address --association-id $(aws ec2 describe-addresses --allocation-ids $EIP_ALLOC_ID --query 'Addresses[0].AssociationId' --output text)
-
-echo "Resources cleaned up. Try running 'terraform destroy' again."
-EOF
-}
