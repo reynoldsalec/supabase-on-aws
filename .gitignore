@@ -28,6 +28,7 @@ credentials.json
 # Local environment files
 .env
 .env.*
+!terraform/files/.env.tftpl
 *.ini
 .htpasswd
 
