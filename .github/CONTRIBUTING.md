@@ -4,7 +4,7 @@ I'm really glad you're reading this, as this means you're looking to improve on 
 
 #### Found a bug?
 
-* If the bug wasn't already reported by searching under [Issues](https://github.com/reynoldsalec/supabase-on-aws/issues), [open a new one](https://github.com/reynoldsalec/supabase-on-aws/issues/new).
+* If the bug wasn't already reported by searching under [Issues](https://github.com/SprintReviewAI/supabase-on-aws/issues), [open a new one](https://github.com/SprintReviewAI/supabase-on-aws/issues/new).
     * Currently we don't have a template for reporting bugs so try to be as specific as possible with the issue at hand (log outputs, setup, env variables with secrets obfuscated etc.).
 
 #### Have a fix or improvement?

@@ -75,7 +75,7 @@ _We're going to run some cli commands within our terminal which can be automated
 
 Once we've setup and created all of the above, clone the repository:
 ```bash
-git clone https://github.com/yourusername/supabase-on-aws.git
+git clone https://github.com/SprintReviewAI/supabase-on-aws.git
 cd supabase-on-aws
 ```
 
