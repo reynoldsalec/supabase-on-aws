@@ -70,12 +70,11 @@ locals {
 
   # Determine the SMTP settings based on which provider is enabled
   effective_smtp = {
-    # Use smtp_settings from ses.tf when SES is enabled, fall back to SendGrid or disabled
-    host     = var.enable_ses ? local.smtp_settings.host : (var.enable_sendgrid ? var.smtp_host : "disabled")
-    port     = var.enable_ses ? local.smtp_settings.port : (var.enable_sendgrid ? var.smtp_port : 25)
-    user     = var.enable_ses ? local.smtp_settings.user : (var.enable_sendgrid ? var.smtp_user : "")
-    password = var.enable_ses ? local.smtp_settings.password : (var.enable_sendgrid ? (var.sendgrid_api != "" ? sendgrid_api_key.this[0].api_key : var.sendgrid_api) : "")
-    enabled  = var.enable_ses || var.enable_sendgrid ? "true" : "false"
+    host     = var.enable_smtp ? var.smtp_host : "disabled"
+    port     = var.enable_smtp ? var.smtp_port : 25
+    user     = var.enable_smtp ? var.smtp_user : ""
+    password = var.enable_smtp ? var.smtp_password : ""
+    enabled  = var.enable_smtp ? "true" : "false"
   }
 
   env_file = templatefile("${path.module}/files/.env.tftpl",

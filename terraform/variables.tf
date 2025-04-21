@@ -134,22 +134,35 @@ variable "studio_project" {
   default     = "Default Project"
 }
 
+variable "enable_smtp" {
+  description = "Whether to enable SMTP for email functionality. If false, email functionality will be disabled."
+  type        = bool
+  default     = true
+}
+
 variable "smtp_host" {
-  description = "The external mail server hostname to send emails through."
+  description = "The SMTP server hostname."
   type        = string
-  default     = "smtp.sendgrid.net"
+  default     = ""
 }
 
 variable "smtp_port" {
-  description = "Port number to connect to the external mail server on."
+  description = "Port number to connect to the SMTP server on."
   type        = number
-  default     = 465
+  default     = 587
 }
 
 variable "smtp_user" {
-  description = "The username to use for mail server requires authentication"
+  description = "The username to use for SMTP authentication."
   type        = string
-  default     = "apikey"
+  default     = ""
+}
+
+variable "smtp_password" {
+  description = "The password to use for SMTP authentication."
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "smtp_sender_name" {

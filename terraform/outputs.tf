@@ -10,21 +10,21 @@ output "htpasswd" {
   sensitive   = true
 }
 
+output "smtp_credentials" {
+  description = "SMTP server configuration details"
+  value       = var.enable_smtp ? {
+    host     = var.smtp_host
+    port     = var.smtp_port
+    username = var.smtp_user
+    password = var.smtp_password
+  } : null
+  sensitive = true
+}
+
 output "sendgrid_generated_api" {
   description = "SendGrid API key to allow sending of emails (The api key is limited to Send Mail scope only). Only available if enable_sendgrid is true."
   value       = var.enable_sendgrid ? sendgrid_api_key.this[0].api_key : "SendGrid is disabled"
   sensitive   = true
-}
-
-output "ses_smtp_credentials" {
-  description = "SMTP server details for Amazon SES"
-  value       = var.enable_ses ? {
-    server   = local.smtp_settings.host
-    port     = local.smtp_settings.port
-    username = local.smtp_settings.user
-    password = local.smtp_settings.password
-  } : null
-  sensitive = true
 }
 
 output "jwt" {
