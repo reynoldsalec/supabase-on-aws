@@ -26,29 +26,30 @@ In addition to the above components, the docker-compose file also runs [swag](ht
 
 All of the above will be running on an AWS [EC2 instance](https://aws.amazon.com/ec2/). Persistent storage for the database is provided via an [EBS volume](https://aws.amazon.com/ebs/) attached to the EC2 instance, and object storage for artifacts like profile pics and more is achieved using [S3](https://aws.amazon.com/s3/). A domain, Elastic IP and Security Group are also set up to ensure we can securely access our Supabase instance from the web.
 
-### SendGrid (Optional)
+### SMTP Configuration
 
-Supabase's auth component, `GoTrue`, requires the ability to send emails for authentication workflows like password resets. As with most cloud providers, AWS has restrictions on outbound port 25 for new accounts (to prevent spam).
+Supabase's auth component, `GoTrue`, requires the ability to send emails for authentication workflows like password resets. The module supports generic SMTP configuration, allowing you to use any SMTP server that supports authentication.
 
-You have two options for email delivery:
+To configure SMTP:
 
-#### Option 1: SendGrid
-We support using [SendGrid](https://sendgrid.com/), which offers a generous free plan of 100 emails/day that should suffice for most use cases.
+1. Set `enable_smtp = true` in your terraform variables
+2. Configure your SMTP settings:
+   ```hcl
+   smtp_host = "your-smtp-server.com"
+   smtp_port = 587
+   smtp_user = "your-username"
+   smtp_password = "your-password"
+   smtp_admin_user = "admin@example.com"
+   smtp_sender_name = "Your Name"
+   ```
 
-To use SendGrid, set `enable_sendgrid = true` and provide a SendGrid API key.
+Supported SMTP servers include:
+- Gmail SMTP
+- Office 365 SMTP
+- Custom SMTP servers
+- Other email service providers' SMTP servers
 
-#### Option 2: Amazon SES (Recommended for AWS deployments)
-For a fully AWS-integrated solution, you can use [Amazon SES](https://aws.amazon.com/ses/) (Simple Email Service) which provides reliable and cost-effective email sending.
-
-To use SES:
-1. Set `enable_ses = true` and `enable_sendgrid = false`
-2. Ensure your domain is verified in SES (the module will attempt to set this up if using Route53)
-3. If your account is in the SES sandbox, you'll need to verify recipient email addresses
-
-SES advantages:
-- Tighter integration with AWS
-- Potentially lower costs for high volume
-- Better deliverability for AWS-hosted applications
+Note: Make sure your SMTP server allows connections from the AWS EC2 instance's IP address, and that the necessary ports are open in your network configuration.
 
 ### Packer and Terraform
 
@@ -57,7 +58,6 @@ Infrastructure as Code practices recommend automating as much as possible of our
 ## Pre-requisites
 
 - [AWS](https://aws.amazon.com/) account
-- [SendGrid](https://app.sendgrid.com/login/) account (Only if you need email functionality)
 - [packer cli](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
 - [terraform cli](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 - curl installed on your machine
@@ -67,7 +67,6 @@ Infrastructure as Code practices recommend automating as much as possible of our
 
 - Create an AWS IAM user with the necessary permissions to create resources
 - Create a Domain in Route 53 (or use an existing one)
-- Create an admin (full access) SendGrid API token ([docs](https://docs.sendgrid.com/for-developers/sending-email/brite-verify#creating-a-new-api-key)) (Only if you need email functionality)
 - (_Optional_) If using Terraform Cloud to manage your state file, create a [user API token](https://app.terraform.io/app/settings/tokens)
 
 ## The (Semi-)Automated Part
@@ -129,11 +128,6 @@ terraform apply
 
 The apply will create all resources including the ACM certificate with DNS validation; however this can take a while to complete.
 
-```bash
-## If you enabled SendGrid, you might need to apply again to verify the SendGrid components
-terraform apply
-```
-
 ### Show generated passwords and tokens for later use
 
 ```bash
@@ -159,7 +153,7 @@ This project uses IAM instance profiles for authentication, which is the AWS rec
 
 1. No AWS access keys or secret keys are needed in your configuration
 2. Terraform will use your environment's AWS credentials (from environment variables or ~/.aws/credentials) to create resources
-3. The EC2 instance will use its attached instance profile to authenticate with AWS services (S3, Route53, SES, etc.)
+3. The EC2 instance will use its attached instance profile to authenticate with AWS services (S3, Route53, etc.)
 
 Using instance profiles enhances security by:
 - Eliminating the need for long-lived credentials

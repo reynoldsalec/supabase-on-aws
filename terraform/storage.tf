@@ -134,12 +134,6 @@ resource "aws_iam_policy" "aws_services_access" {
         ]
         Effect   = "Allow"
         Resource = "*"
-      }] : [],
-      # SES permissions if using SES
-      var.enable_ses ? [{
-        Action   = ["ses:SendEmail", "ses:SendRawEmail", "ses:GetIdentityVerificationAttributes"]
-        Effect   = "Allow"
-        Resource = "*"
       }] : []
     )
   })
