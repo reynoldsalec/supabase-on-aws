@@ -21,12 +21,6 @@ output "smtp_credentials" {
   sensitive = true
 }
 
-output "sendgrid_generated_api" {
-  description = "SendGrid API key to allow sending of emails (The api key is limited to Send Mail scope only). Only available if enable_sendgrid is true."
-  value       = var.enable_sendgrid ? sendgrid_api_key.this[0].api_key : "SendGrid is disabled"
-  sensitive   = true
-}
-
 output "jwt" {
   description = "Randomly generated 40 character jwt secret."
   value       = random_password.jwt.result

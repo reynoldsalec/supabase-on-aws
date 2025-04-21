@@ -22,10 +22,6 @@ terraform {
       source  = "loafoe/htpasswd"
       version = "1.0.4"
     }
-    sendgrid = {
-      source  = "taharah/sendgrid"
-      version = "0.2.0"
-    }
     time = {
       source  = "hashicorp/time"
       version = "0.9.1"
@@ -35,10 +31,6 @@ terraform {
 
 provider "aws" {
   region     = var.region
-}
-
-provider "sendgrid" {
-  api_key = var.enable_sendgrid ? var.sendgrid_api : "DISABLED"
 }
 
 ############
@@ -60,11 +52,11 @@ terraform {
 # terraform {
 #   cloud {
 #     organization = "name-of-org"
-
+#
 #     workspaces {
 #       tags = ["supabase"]
 #     }
-
+#
 #     token = var.tf_token
 #   }
 # }
