@@ -99,6 +99,7 @@ locals {
       TF_DEFAULT_ORGANIZATION     = "${var.studio_org}",
       TF_DEFAULT_PROJECT          = "${var.studio_project}",
       TF_EMAIL_ENABLED            = local.effective_smtp.enabled,
+      TF_EMAIL_CONFIRM            = var.enable_email_autoconfirm ? "true" : "false",
       TF_USE_HTTPS                = var.use_route53 ? "true" : "false",
     }
   )

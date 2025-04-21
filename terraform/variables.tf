@@ -244,3 +244,9 @@ variable "use_route53" {
   type        = bool
   default     = true
 }
+
+variable "enable_email_autoconfirm" {
+  description = "Whether to automatically confirm email addresses during signup. If false, users will need to confirm their email addresses."
+  type        = bool
+  default     = false
+}
