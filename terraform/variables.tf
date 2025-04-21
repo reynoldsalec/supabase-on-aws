@@ -208,9 +208,8 @@ variable "subnet_id" {
 }
 
 variable "ami_id" {
-  description = "ID of the AMI to use for the EC2 instance. If not provided, the latest Ubuntu AMI will be used."
+  description = "ID of the AMI to use for the EC2 instance. This AMI must exist in the specified region."
   type        = string
-  default     = ""
 }
 
 variable "certificate_arn" {
