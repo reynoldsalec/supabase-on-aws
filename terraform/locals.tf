@@ -26,8 +26,7 @@ resource "time_static" "jwt_exp" {
 
 resource "random_password" "jwt" {
   length           = 40
-  special          = true
-  override_special = "-_"
+  special          = false
 }
 
 resource "jwt_hashed_token" "anon" {
