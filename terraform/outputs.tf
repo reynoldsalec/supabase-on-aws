@@ -74,6 +74,11 @@ output "instance_public_dns" {
   value       = aws_instance.this.public_dns
 }
 
+output "instance_private_dns" {
+  description = "The private DNS of the EC2 instance."
+  value       = aws_instance.this.private_dns
+}
+
 output "supabase_url" {
   description = "The URL to access Supabase."
   value       = var.use_route53 ? "https://supabase.${var.domain}" : "http://${aws_eip.this.public_dns}"
