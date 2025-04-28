@@ -245,8 +245,35 @@ variable "use_route53" {
   default     = true
 }
 
+# Enable or disable Let's Encrypt staging environment
+variable "use_letsencrypt_staging" {
+  description = "Whether to use Let's Encrypt staging environment for certificate generation. Useful for testing to avoid rate limits."
+  type        = bool
+  default     = false
+}
+
 variable "enable_email_autoconfirm" {
   description = "Whether to automatically confirm email addresses during signup. If false, users will need to confirm their email addresses."
   type        = bool
   default     = false
+}
+
+variable "enable_github_oauth" {
+  description = "Whether to enable GitHub OAuth authentication."
+  type        = bool
+  default     = false
+}
+
+variable "github_client_id" {
+  description = "GitHub OAuth client ID. Required only if enable_github_oauth is true."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "github_client_secret" {
+  description = "GitHub OAuth client secret. Required only if enable_github_oauth is true."
+  type        = string
+  sensitive   = true
+  default     = ""
 }

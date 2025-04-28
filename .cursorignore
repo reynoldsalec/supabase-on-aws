@@ -1,0 +1,13 @@
+# Include .en.tftpl files
+!*.env.tftpl
+
+# Default exclusions
+.git/
+.terraform/
+node_modules/
+dist/
+build/
+*.log
+*.tgz
+*.zip
+.DS_Store

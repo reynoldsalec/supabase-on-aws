@@ -100,6 +100,10 @@ locals {
       TF_EMAIL_ENABLED            = local.effective_smtp.enabled,
       TF_EMAIL_CONFIRM            = var.enable_email_autoconfirm ? "true" : "false",
       TF_USE_HTTPS                = var.use_route53 ? "true" : "false",
+      TF_GITHUB_OAUTH_ENABLED     = var.enable_github_oauth ? "true" : "false",
+      TF_GITHUB_CLIENT_ID         = var.github_client_id,
+      TF_GITHUB_CLIENT_SECRET     = var.github_client_secret,
+      TF_GITHUB_REDIRECT_URI      = var.use_route53 ? "https://supabase.${var.domain}/auth/v1/callback" : "http://${local.domain_name}/auth/v1/callback",
     }
   )
 

@@ -26,6 +26,14 @@ smtp_sender_name = "Your Name"
 # Email Configuration
 enable_email_autoconfirm = false  # Set to true to automatically confirm email addresses during signup
 
+# GitHub OAuth Configuration
+enable_github_oauth = false
+github_client_id = "your-github-client-id"
+github_client_secret = "your-github-client-secret"
+
+# Enable or disable Let's Encrypt staging environment
+use_letsencrypt_staging = false  # Set to true to use Let's Encrypt staging environment (useful for testing)
+
 ## OPTIONAL ##
 # ami_id            = ""
 # instance_type     = "t3.small"
