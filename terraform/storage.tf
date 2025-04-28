@@ -77,6 +77,9 @@ resource "aws_ebs_volume" "this" {
     }
   )
 
+  lifecycle {
+    prevent_destroy = var.preserve_ebs_volume
+  }
 }
 
 # Attach EBS Volume to EC2 instance

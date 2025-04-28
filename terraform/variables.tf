@@ -298,3 +298,9 @@ variable "google_client_secret" {
   sensitive   = true
   default     = ""
 }
+
+variable "preserve_ebs_volume" {
+  description = "Whether to preserve the EBS volume when destroying the infrastructure. If true, the volume will be detached but not deleted."
+  type        = bool
+  default     = false
+}
