@@ -31,6 +31,11 @@ enable_github_oauth = false
 github_client_id = "your-github-client-id"
 github_client_secret = "your-github-client-secret"
 
+# Google OAuth Configuration
+enable_google_oauth = false
+google_client_id = "your-google-client-id"
+google_client_secret = "your-google-client-secret"
+
 # Enable or disable Let's Encrypt staging environment
 use_letsencrypt_staging = false  # Set to true to use Let's Encrypt staging environment (useful for testing)
 

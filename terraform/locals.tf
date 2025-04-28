@@ -103,7 +103,10 @@ locals {
       TF_GITHUB_OAUTH_ENABLED     = var.enable_github_oauth ? "true" : "false",
       TF_GITHUB_CLIENT_ID         = var.github_client_id,
       TF_GITHUB_CLIENT_SECRET     = var.github_client_secret,
-      TF_GITHUB_REDIRECT_URI      = var.use_route53 ? "https://supabase.${var.domain}/auth/v1/callback" : "http://${local.domain_name}/auth/v1/callback",
+      TF_GOTRUE_REDIRECT_URI      = var.use_route53 ? "https://supabase.${var.domain}/auth/v1/callback" : "http://${local.domain_name}/auth/v1/callback",
+      TF_GOOGLE_OAUTH_ENABLED     = var.enable_google_oauth ? "true" : "false",
+      TF_GOOGLE_CLIENT_ID         = var.google_client_id,
+      TF_GOOGLE_CLIENT_SECRET     = var.google_client_secret,
     }
   )
 

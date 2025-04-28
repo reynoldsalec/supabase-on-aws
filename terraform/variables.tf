@@ -277,3 +277,24 @@ variable "github_client_secret" {
   sensitive   = true
   default     = ""
 }
+
+# Enable or disable Google OAuth authentication
+variable "enable_google_oauth" {
+  description = "Whether to enable Google OAuth authentication."
+  type        = bool
+  default     = false
+}
+
+variable "google_client_id" {
+  description = "Google OAuth client ID. Required only if enable_google_oauth is true."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth client secret. Required only if enable_google_oauth is true."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
