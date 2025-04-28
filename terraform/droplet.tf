@@ -47,6 +47,8 @@ data "cloudinit_config" "this" {
 
       # Setup Supabase directories
       mkdir -p /mnt/supabase_volume/supabase/data
+      mkdir -p /mnt/supabase_volume/supabase/ssl
+      mkdir -p /mnt/supabase_volume/supabase/log
       mkdir -p /root/supabase
 
       # Copy configuration to ubuntu user's home directory

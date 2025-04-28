@@ -24,6 +24,8 @@ services:
       - ./supabase.subdomain.conf:/config/nginx/proxy-confs/supabase.subdomain.conf
       - ./route53.ini:/config/dns-conf/route53.ini
       - ./.htpasswd:/config/nginx/.htpasswd
+      - /mnt/supabase_volume/supabase/ssl:/config/nginx/ssl
+      - /mnt/supabase_volume/supabase/log:/config/log
     ports:
       - 443:443
       - 80:80
